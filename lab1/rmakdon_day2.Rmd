@@ -1,0 +1,37 @@
+---
+title: "RMarkdown Practice"
+output: html_document
+date: "2024-01-11"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Great Title 
+### Great Title
+#### Great Title
+
+## My Code Modifications With Help of ChatGPT
+```{r}
+x <- c(4, 6, 8, 5, 6, 7, 7, 7)
+y <- c(4, 5, 7, 8, 1, 6, 2, 3)
+```
+```{r}
+sum_result <- sum(x,y)
+print(sum_result)
+```
+
+## Link Practice
+[BIS 15L Webpage](https://jmledford3115.github.io/datascibiol/) 
+
+# The Copy of The Code
+```{r}
+#install.packages("tidyverse")
+library("tidyverse")
+```
+
+```{r}
+ggplot(mtcars, aes(x = factor(cyl))) +
+    geom_bar()
+```

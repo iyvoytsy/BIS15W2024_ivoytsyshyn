@@ -61,7 +61,7 @@ Order of operations applies and you don't need to add an '=' sign.
 
 What is going on here? How do we adjust this expression so the output is 12?
 ```{r}
-4-2*6
+(4-2)*6
 ```
 
 
@@ -70,20 +70,25 @@ Statistics are what R was originally written for and there are thousands of pack
 First, we need to make a vector or string of values which we will store as an object x. More on this later...
 ```{r}
 x <- c(4, 6, 8, 5, 6, 7, 7, 7)
+y <- c(4, 5, 7, 8, 1, 6, 2, 3)
 ```
-
 Now we can calculate the mean of object x.  
 ```{r}
-mean(x)
+mean(y)
 ```
 
 We can do the same thing for median.  
 ```{r}
-median(x)
+median(y)
+x+y
 ```
 
 ```{r}
-sd(x)
+sd(y)
+```
+```{r}
+sum_result <- sum(x,y)
+print(sum_result)
 ```
 
 ## RMarkdown  
