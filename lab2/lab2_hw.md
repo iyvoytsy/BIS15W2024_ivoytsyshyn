@@ -1,7 +1,7 @@
 ---
 title: "Lab 2 Homework"
 author: "Iliya Voytsyshyn"
-date: "`r Sys.Date()`"
+date: "2024-01-16"
 output:
   html_document: 
     theme: spacelab
@@ -20,7 +20,8 @@ That is the list of variables, the simpliest data structure that can be found in
 Math matrix with the same type of data that is allocated into a fixed number of rows and columes. 
 
 3. Below are data collected by three scientists (Jill, Steve, Susan in order) measuring temperatures of eight hot springs. Run this code chunk to create the vectors.  
-```{r}
+
+```r
 spring_1 <- c(36.25, 35.40, 35.30)
 spring_2 <- c(35.15, 35.35, 33.35)
 spring_3 <- c(30.70, 29.65, 29.20)
@@ -33,7 +34,8 @@ spring_8 <- c(36.80, 36.45, 33.15)
 
 4. Build a data matrix that has the springs as rows and the columns as scientists.  
 
-```{r}
+
+```r
 mat1.data <- c(spring_1,spring_2,spring_3, spring_4, spring_5, spring_6, spring_7, spring_8)
 mat1 <- matrix(mat1.data, nrow=3)
 
@@ -43,38 +45,95 @@ colnames(mat1) <- c("1.Bluebell Spring", "2.Opal Spring", "3.Riverside Spring", 
 mat1
 ```
 
+```
+##       1.Bluebell Spring 2.Opal Spring 3.Riverside Spring 4.Too Hot Spring
+## Jill              36.25         35.15              30.70            39.70
+## Steve             35.40         35.35              29.65            40.05
+## Susan             35.30         33.35              29.20            38.65
+##       5.Mystery Spring 6.Emerald Spring 7.Black Spring 8.Pearl Spring
+## Jill             31.85            30.20           32.9          36.80
+## Steve            31.40            30.65           32.5          36.45
+## Susan            29.30            29.75           32.8          33.15
+```
+
 5. The names of the springs are 1.Bluebell Spring, 2.Opal Spring, 3.Riverside Spring, 4.Too Hot Spring, 5.Mystery Spring, 6.Emerald Spring, 7.Black Spring, 8.Pearl Spring. Name the rows and columns in the data matrix. Start by making two new vectors with the names, then use `colnames()` and `rownames()` to name the columns and rows.
 
 
 6. Calculate the mean temperature of all eight springs.
-```{r}
+
+```r
 row_means <- rowMeans(mat1)
 #I need to calculcate mean for each row
 ```
 7. Add this as a new column in the data matrix.  
-```{r}
+
+```r
 mat1 <- cbind(mat1, Mean_Temperature = row_means)
 mat1
+```
+
+```
+##       1.Bluebell Spring 2.Opal Spring 3.Riverside Spring 4.Too Hot Spring
+## Jill              36.25         35.15              30.70            39.70
+## Steve             35.40         35.35              29.65            40.05
+## Susan             35.30         33.35              29.20            38.65
+##       5.Mystery Spring 6.Emerald Spring 7.Black Spring 8.Pearl Spring
+## Jill             31.85            30.20           32.9          36.80
+## Steve            31.40            30.65           32.5          36.45
+## Susan            29.30            29.75           32.8          33.15
+##       Mean_Temperature
+## Jill          34.19375
+## Steve         33.93125
+## Susan         32.68750
+```
+
+```r
 #add mean to 
 ```
 
 8. Show Susan's value for Opal Spring only.
-```{r}
+
+```r
 susan_opal <- mat1["Susan", "2.Opal Spring"]
 susan_opal
 ```
 
+```
+## [1] 33.35
+```
+
 9. Calculate the mean for Jill's column only.  
-```{r}
+
+```r
 jill_mean <- mat1["Jill", ]
 mean(jill_mean)
 ```
 
+```
+## [1] 34.19375
+```
+
 10. Use the data matrix to perform one calculation or operation of your interest.
-```{r}
+
+```r
 row_medians <- apply(mat1, 1, median)
 mat <- cbind(mat1, Median_Tempreture = row_medians)
 mat1
+```
+
+```
+##       1.Bluebell Spring 2.Opal Spring 3.Riverside Spring 4.Too Hot Spring
+## Jill              36.25         35.15              30.70            39.70
+## Steve             35.40         35.35              29.65            40.05
+## Susan             35.30         33.35              29.20            38.65
+##       5.Mystery Spring 6.Emerald Spring 7.Black Spring 8.Pearl Spring
+## Jill             31.85            30.20           32.9          36.80
+## Steve            31.40            30.65           32.5          36.45
+## Susan            29.30            29.75           32.8          33.15
+##       Mean_Temperature
+## Jill          34.19375
+## Steve         33.93125
+## Susan         32.68750
 ```
 row_means <- rowMeans(mat1)
 mat1 <- cbind(mat1, Mean_Temperature = row_means)
