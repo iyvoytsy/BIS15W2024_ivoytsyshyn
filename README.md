@@ -1,4 +1,6 @@
-###The repository
-#CEO: Iliya Voytsyshyn
+The repository
+CEO: Iliya Voytsyshyn
 
-If you find somthing interesting you are welcome to use it!
+Contact: genvoytsyshyn@ucdavis.edu
+
+If you find something interesting you are welcome to use it!
