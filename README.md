@@ -1,4 +1,4 @@
-# The repository
+# The Repository
 
 ## CEO
 
