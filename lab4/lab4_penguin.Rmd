@@ -1,0 +1,49 @@
+---
+title: "palmerpenguins"
+author: "Iliya Voytsyshyn"
+date: "2024-01-23"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r}
+library(palmerpenguins)
+```
+
+```{r}
+penguin <- penguins
+```
+
+
+```{r}
+dim(penguins)
+glimpse(penguin)
+```
+
+```{r}
+names(penguin)
+```
+
+```{r}
+table(penguin$island)
+```
+
+```{r}
+mean(penguin$body_mass_g, na.rm = TRUE)
+```
+
+```{r}
+mean_penguin <- t.test(penguin$body_mass_g)
+mean_penguin
+```
+
+
