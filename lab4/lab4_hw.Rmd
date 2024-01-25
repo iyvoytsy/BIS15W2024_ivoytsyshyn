@@ -33,6 +33,7 @@ Data: http://datadryad.org/resource/doi:10.5061/dryad.q5j65/1
 ```{r}
 vertebrate <- readr::read_csv("data/Tamburelloetal_HomeRangeDatabase.csv")
 ```
+
 ```{r}
 vertebrate
 ```
@@ -49,67 +50,80 @@ library(janitor)
 names(vertebrate)
 ```
 ```{r}
-clean_names(vertebrate)
+vertebrate_clean <- clean_names(vertebrate)
 ```
 
 ```{r}
-variable_classes <- sapply(vertebrate, class)
+names(vertebrate_clean)
+```
+
+
+```{r}
+variable_classes <- sapply(vertebrate_clean, class)
 variable_classes
 ```
 
 ```{r}
-summary(vertebrate)
+summary(vertebrate_clean)
 ```
+
+```{r}
+glimpse(vertebrate_clean) #different way
+```
+
 **3. Change the class of the variables `taxon` and `order` to factors and display their levels.**  
 ```{r}
-vertebrate$order <- as.factor(vertebrate$order)
-vertebrate$taxon <- as.factor(vertebrate$taxon)
+vertebrate_clean$order <- as.factor(vertebrate_clean$order)
+vertebrate_clean$taxon <- as.factor(vertebrate_clean$taxon)
 
-levels(vertebrate$taxon)
-levels(vertebrate$order)
+levels(vertebrate_clean$taxon)
+levels(vertebrate_clean$order)
 ```
 
 **4. What taxa are represented in the `homerange` data frame? Make a new data frame `taxa` that is restricted to taxon, common name, class, order, family, genus, species.**  
 ```{r}
-select (vertebrate, "taxon")
+select (vertebrate_clean, "taxon")
 ```
+
 ```{r}
-names(vertebrate)
+names(vertebrate_clean)
 ```
 
 
 ```{r}
-taxa <- select(vertebrate, "taxon", "common.name", "class", "order", "family", "genus", "species")
+taxa <- select(vertebrate_clean, "taxon", "common_name", "class", "order", "family", "genus", "species")
 taxa
 ```
 
 **5. The variable `taxon` identifies the common name groups of the species represented in `homerange`. Make a table the shows the counts for each of these `taxon`.**  
 ```{r}
-table(vertebrate$taxon)
+table(vertebrate_clean$taxon)
 ```
 
 **6. The species in `homerange` are also classified into trophic guilds. How many species are represented in each trophic guild.**  #(until here)
 ```{r}
-table(vertebrate$trophic.guild)
+table(vertebrate_clean$trophic_guild)
 ```
 
 
 **7. Make two new data frames, one which is restricted to carnivores and another that is restricted to herbivores.**  
 ```{r}
-
+vertebrate_clean_herbi <- filter(vertebrate_clean, trophic_guild == "herbivore")
+vertebrate_clean_carni <- filter(vertebrate_clean, trophic_guild == "carnivore")
 ```
 
 **8. Do herbivores or carnivores have, on average, a larger `mean.hra.m2`? Remove any NAs from the data.**  
 ```{r}
-
+mean(vertebrate_clean_herbi$mean_hra_m2, na.rm = T)
 ```
 
 ```{r}
-
+mean(vertebrate_clean_carni$mean_hra_m2, na.rm = T)
 ```
 
 **9. Make a new dataframe `owls` that is limited to the mean mass, log10 mass, family, genus, and species of owls in the database. Which is the smallest owl? What is its common name? Do a little bit of searching online to see what you can learn about this species and provide a link below** 
 ```{r}
+owls <- select(filter#(mammals, order == "Strigiformes"), mean_mass, log10_mass = log10(mean_mass), family, genus, species)
 
 ```
 
