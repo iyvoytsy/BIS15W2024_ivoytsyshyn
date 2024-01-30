@@ -3,9 +3,9 @@ title: "Lab 4 Homework"
 author: "Please Add Your Name Here"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
-    toc: no
+    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
@@ -123,14 +123,25 @@ mean(vertebrate_clean_carni$mean_hra_m2, na.rm = T)
 
 **9. Make a new dataframe `owls` that is limited to the mean mass, log10 mass, family, genus, and species of owls in the database. Which is the smallest owl? What is its common name? Do a little bit of searching online to see what you can learn about this species and provide a link below** 
 ```{r}
-owls <- select(filter#(mammals, order == "Strigiformes"), mean_mass, log10_mass = log10(mean_mass), family, genus, species)
-
+smallest_owl <- vertebrate_clean %>%
+    filter(order  == "strigiformes" ) %>%
+  select(mean_mass_g, log10_mass, family, genus, species) %>%
+  arrange(mean_mass_g) %>%
+  head(1)
+smallest_owl
 ```
+[Information about samallest owl](https://www.jstor.org/stable/23734161?casa_token=-c8zjffLtxsAAAAA%3Aq0-_Ze29qP9JNJwJDwh5GSA_pCUFOBLnKh_vOEqy1pDjkK2-vA4M6Tkaf1cO-LN1ds5pxKqdoAe2losXMQ_kGaLdLWQ1dqljn1m22hkE1_cU3a4_fdme)
 
 **10. As measured by the data, which bird species has the largest homerange? Show all of your work, please. Look this species up online and tell me about it!**.  
 ```{r}
-
+largest_home_range <- vertebrate_clean %>%
+  filter(class == "aves" & !is.na(mean_hra_m2)) %>%
+  arrange(desc(mean_hra_m2)) %>%
+  head(1) %>%
+  select(mean_hra_m2, common_name, genus, species)
+largest_home_range
 ```
+[Information about bird with the largets home range](https://vtechworks.lib.vt.edu/items/5e169ed8-fb33-4f24-b0d2-d23e36c3936a)
 
 ## Push your final code to GitHub!
 Please be sure that you check the `keep md` file in the knit preferences.   
