@@ -165,6 +165,33 @@ vertebrate %>%
 ```{r}
 names(vertebrate)
 ```
+```{r}
+hunt_veg_relation <- vertebrate %>%
+  group_by(HuntCat) %>%
+  summarize(sd_veg = sd(Veg_Rich, na.rm=TRUE),
+            mean_veg = mean(Veg_Rich, na.rm=TRUE),
+            total=n()) %>%
+  select(HuntCat, sd_veg, mean_veg, total) %>%
+  arrange(desc(mean_veg))
+hunt_veg_relation
+```
+
+```{r}
+hunt_species_relation <- vertebrate %>%
+  group_by(HuntCat) %>%
+  summarize(sd_species = sd(Rich_AllSpecies, na.rm=TRUE),
+            mean_species = mean(Rich_AllSpecies, na.rm=TRUE),
+            total=n()) %>%
+  select(HuntCat, sd_species, mean_species, total) %>%
+  arrange(desc(mean_species))
+hunt_species_relation
+```
+```{r}
+
+```
+
+
+
 
 
 
