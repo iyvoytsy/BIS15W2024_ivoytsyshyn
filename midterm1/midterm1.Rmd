@@ -1,0 +1,169 @@
+---
+title: "Midterm 1 W24"
+author: "Iliya Voytsyshyn"
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+## Instructions
+Answer the following questions and complete the exercises in RMarkdown. Please embed all of your code and push your final work to your repository. Your code must be organized, clean, and run free from errors. Remember, you must remove the `#` for any included code chunks to run. Be sure to add your name to the author header above. 
+
+Your code must knit in order to be considered. If you are stuck and cannot answer a question, then comment out your code and knit the document. You may use your notes, labs, and homework to help you complete this exam. Do not use any other resources- including AI assistance.  
+
+Don't forget to answer any questions that are asked in the prompt!  
+
+Be sure to push your completed midterm to your repository. This exam is worth 30 points.  
+
+## Background
+In the data folder, you will find data related to a study on wolf mortality collected by the National Park Service. You should start by reading the `README_NPSwolfdata.pdf` file. This will provide an abstract of the study and an explanation of variables.  
+
+The data are from: Cassidy, Kira et al. (2022). Gray wolf packs and human-caused wolf mortality. [Dryad](https://doi.org/10.5061/dryad.mkkwh713f). 
+
+## Load the libraries
+```{r message=FALSE, warning=FALSE}
+library("tidyverse")
+library("janitor")
+```
+
+## Load the wolves data
+In these data, the authors used `NULL` to represent missing values. I am correcting this for you below and using `janitor` to clean the column names.
+```{r message=FALSE, warning=FALSE}
+wolves <- read.csv("data/NPS_wolfmortalitydata.csv", na = c("NULL")) %>% clean_names()
+```
+
+## Questions
+Problem 1. (1 point) Let's start with some data exploration. What are the variable (column) names?  
+```{r}
+names(wolves)
+```
+
+
+Problem 2. (1 point) Use the function of your choice to summarize the data and get an idea of its structure.  
+```{r}
+glimpse(wolves)
+```
+
+
+Problem 3. (3 points) Which parks/ reserves are represented in the data? Don't just use the abstract, pull this information from the data.  
+```{r}
+table(wolves$park)
+```
+
+
+Problem 4. (4 points) Which park has the largest number of wolf packs?
+```{r}
+park_large <- wolves %>%
+  group_by(park) %>%
+  summarize(n_wolf_pack=n(), .groups= 'keep') %>%
+  arrange(desc(n_wolf_pack)) %>%
+  head(1)
+park_large
+```
+
+
+Problem 5. (4 points) Which park has the highest total number of human-caused mortalities `mort_all`?
+```{r}
+high_death <- wolves %>%
+  group_by(park) %>%
+  select(park, mort_all) %>%
+  filter(mort_all == 1) %>%
+  summarise(n_park=n()) %>%
+  arrange(desc(n_park)) %>%
+  head(1)
+high_death
+```
+
+
+The wolves in [Yellowstone National Park](https://www.nps.gov/yell/learn/nature/wolf-restoration.htm) are an incredible conservation success story. Let's focus our attention on this park.  
+
+Problem 6. (2 points) Create a new object "ynp" that only includes the data from Yellowstone National Park.  
+```{r}
+ynp <- wolves %>%
+  filter(park == "YNP")
+```
+
+
+Problem 7. (3 points) Among the Yellowstone wolf packs, the [Druid Peak Pack](https://www.pbs.org/wnet/nature/in-the-valley-of-the-wolves-the-druid-wolf-pack-story/209/) is one of most famous. What was the average pack size of this pack for the years represented in the data?
+```{r}
+ynp %>%
+  filter(pack == "druid") %>%
+  #group_by(biolyr) %>%
+  summarise(mean_pack_size=mean(packsize_aug),
+            n_pack=n())
+```
+
+
+Problem 8. (4 points) Pack dynamics can be hard to predict- even for strong packs like the Druid Peak pack. At which year did the Druid Peak pack have the largest pack size? What do you think happened in 2010?
+```{r}
+ynp %>%
+  filter(pack == "druid") %>%
+  group_by(biolyr) %>%
+  summarise(mean_pack_size=mean(packsize_aug)) %>%
+  arrange(desc(mean_pack_size)) %>%
+  slice(1)
+```
+```{r}
+ynp %>%
+  filter(pack == "druid") %>%
+  group_by(pack) %>%
+  filter(biolyr == 2010) %>%
+  is.na()
+```
+Here we can see that for the year 2010 there is no information (NA) about presistence for druid pack. Also through some research I found that [Druid Pack](https://yollowstonewolves.fandom.com/wiki/Druids_Pack#:~:text=The%20Druids%20were%20down%20to,his%20cattle%20out%20of%20desperation.) has been at the edge of extinction since the population "were down to one wolf". We can confirm this infromation if we will look at the data: 
+```{r}
+ynp %>%
+  filter(pack == "druid") %>%
+  group_by(pack) %>%
+  filter (between(biolyr, 2009, 2010))
+```
+
+
+Problem 9. (5 points) Among the YNP wolf packs, which one has had the highest overall persistence `persisty1` for the years represented in the data? Look this pack up online and tell me what is unique about its behavior- specifically, what prey animals does this pack specialize on?  
+```{r}
+#ynp %>%
+ # group_by(pack) %>%
+ # select(park, pack, persisty1, packsize_aug) %>%
+ # filter(persisty1 == 1 & packsize_aug != "NA") %>%
+ # arrange(desc(packsize_aug)) %>%
+ # head(1)
+```
+```{r}
+
+ynp %>%
+  group_by(pack) %>%
+  select(park, biolyr, pack, persisty1, packsize_aug) %>%
+  filter(persisty1 == 1) %>%
+  summarise(n_pack=n()) %>%
+  arrange(desc(n_pack)) %>%
+  head(1)
+```
+
+Among the Yellowstone wolf packs, the [Mollie's Pack](https://www.yellowstonewolf.org/yellowstones_wolves.php?pack_id=6) is has a unique unique behavior, including hunting bison and regular interactions with bears. Also this pack existed for 15 years and is a good example of the pack that ent through the alpha death.
+
+
+Problem 10. (3 points) Perform one analysis or exploration of your choice on the `wolves` data. Your answer needs to include at least two lines of code and not be a summary function.  
+
+Here I am trying to find the relationship between death of the leader and death of the non leader wolves in a pack.  
+```{r}
+my_analysis <- wolves %>%
+  group_by(pack) %>%
+  summarise(mean_death_other=mean(mort_all, na.rm = T),
+           mean_death_lead=mean(mort_lead, na.rm = T),
+            n=n()) %>%
+  mutate(death_relation = mean_death_lead/mean_death_other) %>%
+  arrange(desc(death_relation))
+my_analysis
+```
+```{r}
+my_analysis$death_relation <- as.numeric(my_analysis$death_relation)
+hist(my_analysis$death_relation, main = "Leader and pack deaths relation", xlab = "death_relation") #here I tried to do the histogram to display the death_relation for each pack, but I did not know how to represent the pack names on the histogram, since we did not go over it. 
+```
+
+
+
+
+
+
+

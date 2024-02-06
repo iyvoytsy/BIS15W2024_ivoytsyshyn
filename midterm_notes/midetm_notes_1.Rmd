@@ -204,7 +204,8 @@ Basic data analysis
 tabyl(dataset, column)
 ```
 
-# Lab 7 
+>>>
+# Lab 7
 
 ```{r}
 msleep24$sleep_total_24 <- as.numeric(msleep24$sleep_total_24)
