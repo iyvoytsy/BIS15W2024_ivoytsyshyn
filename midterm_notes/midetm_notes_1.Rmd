@@ -1,0 +1,300 @@
+---
+title: "Midterm 1 Keys"
+author: "Iliya Voytsyshyn"
+date: "2024-02-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load library:
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(skimr)
+```
+
+>>>
+# Lab 2: 
+
+```{r}
+object <- matrix(dataset.data, nrow=n)
+```
+
+
+```{r}
+object <- cbind(dataset, row_name = object_with_mean) #allows me to addd coloumn
+```
+
+>>>
+# Lab 3: 
+
+```{r}
+object <- data.frame(matrix_1, matrix_2, matrix_2)
+```
+
+```{r}
+write.csv(dataset, "name_of_it", row.names = FALSE)
+object <- read_csv("folder/dataset_name")
+library(janitor)
+clean_names(dataset)
+object <- readr::read_csv("folder/dataset_name")
+```
+
+
+For basic analysis:
+```{r}
+str(dataset) 
+glimpse(dataset)
+names(dataset)
+summary(dataset)
+dim(dataset)
+```
+
+```{r}
+head(dataset, n) #gives you first row frame
+tail(dataset, n) #last rows 
+
+table(dataset$column)
+count(dataset$column) #for the pipe
+```
+
+
+
+Mean alternative:
+```{r}
+object <- t.test(large$sleep_total, small$sleep_total)
+object 
+```
+
+Mean compersion: 
+```{r}
+if (mean(filtered_dataset$column) > mean(filtered_dataset.1$column)) {
+  cat("The mean of 'filtered_dataset' is bigger.\n")
+} else if (mean(filtered_dataset1$column) > mean(filtered_dataset$column)) {
+  cat("The mean of 'filtered_dataset1' is bigger.\n")
+} else {
+  cat("The means are equal.\n")
+}
+```
+
+
+
+Finding max of ceratin colums:
+```{r}
+object <- max(dataset$column)
+object_2 <- dataset[dataset$column == object, c("coulumn", "column", "column")]
+object_2
+```
+
+>>>
+ Lab 4:
+
+```{r}
+select(dataset, matches/contains/ends_with("a.+er")) #handy bit of code for the project (parts of words)
+
+select(dataset, column)
+
+select_if(dataset, ~!is.numeric(.)) # (.) all of the cells, ! - all other then mentions data 
+
+filter(dataset, column %in% c(167, 175))
+```
+
+
+
+```{r}
+largest_home_range <- vertebrate_clean %>%
+  filter(class == "aves" & !is.na(mean_hra_m2)) %>% #for data where we have NA
+  arrange(desc(mean_hra_m2)) %>%
+  head(1) %>%
+  select(mean_hra_m2, common_name, genus, species)
+largest_home_range
+```
+
+
+>>>
+# Lab 5
+
+```{r}
+filter(dataset, column == "AL" & column1 > 350) 
+```
+
+
+Here we compere means
+```{r}
+if (mean(mammals$mass[mammals$genus == "Lophocebus"]) > 
+    mean(mammals$mass[mammals$genus == "Erythrocebus"]) &&
+    mean(mammals$mass[mammals$genus == "Erythrocebus"]) > 
+    mean(mammals$mass[mammals$genus == "Macaca"])) {
+  cat("Lophocebus has the smallest newborn mass among the specified genera.\n")
+} else if (mean(mammals$mass[mammals$genus == "Erythrocebus"]) > 
+           mean(mammals$mass[mammals$genus == "Lophocebus"]) &&
+           mean(mammals$mass[mammals$genus == "Lophocebus"]) > 
+           mean(mammals$mass[mammals$genus == "Macaca"])) {
+  cat("Erythrocebus has the smallest newborn mass among the specified genera.\n")
+} else if (mean(mammals$mass[mammals$genus == "Macaca"]) > 
+           mean(mammals$mass[mammals$genus == "Lophocebus"]) &&
+           mean(mammals$mass[mammals$genus == "Lophocebus"]) > 
+           mean(mammals$mass[mammals$genus == "Erythrocebus"])) {
+  cat("Macaca has the smallest newborn mass among the specified genera.\n")
+} else {
+  cat("The means are equal.\n")
+}
+```
+
+
+
+
+```{r}
+fish %>% 
+  select(lakeid, radii_length_mm) %>% 
+  filter(lakeid == "AL" | lakeid == "AR") %>% 
+  filter (between(radii_length_mm, 2, 4)) %>% 
+  arrange(desc(radii_length_mm)) #here we combine AR and AL and sort them from high to low
+```
+
+```{r}
+fish %>% 
+  mutate(length_mm = length*10) %>% 
+  select(fish_id, length, length_mm) # allows to create new column fro existing one
+```
+  
+```{r}
+mammals %>%
+  mutate_all(tolower) # all to lower case
+
+```
+
+
+>>>
+# Lab 6 
+
+Pullinng out top value: 
+```{r}
+mammals %>% 
+  select(genus, species, max_life) %>%
+  mutate(max_life_new = ifelse(max_life == -999.00, NA, max_life))%>% 
+  arrange(desc(max_life)) %>%
+  slice(1)
+```
+
+
+
+Find your hero in the superhero_info data? Show their info!  
+```{r}
+my_favorite <- superhero_power %>%
+  filter(hero_names == "Groot") %>%
+  select_if(~all(. == "TRUE") | . == "Groot")
+my_favorite
+```
+
+```{r}
+my_hero_info <- superhero_power %>%
+  filter(hero_names %in% my_favorite$hero_names)
+my_hero_info
+```
+
+
+
+Basic data analysis 
+```{r}
+tabyl(dataset, column)
+```
+
+# Lab 7 
+
+```{r}
+msleep24$sleep_total_24 <- as.numeric(msleep24$sleep_total_24)
+hist(msleep24$sleep_total_24, main = "Histogram of sleept_total", xlab = "sleept_total") 
+```
+
+
+
+
+```{r}
+msleep %>%
+  filter(bodywt > 200) %>%
+  summarise(mean_sleep_lg = mean(sleep_total),
+            min_sleep_lg = min(sleep_total),
+            max_sleep_lg = max(sleep_total), 
+            sd_sleep_lg = sd(sleep_total), 
+            total=n())
+```
+            
+```{r}
+msleep %>% 
+  filter(bodywt > 100) %>%
+  n_distinct()
+```
+
+```{r}
+msleep %>%
+  group_by(order) %>%
+  summarize(min_brainwt = min(brainwt, na.rm=TRUE),
+            max_brainwt = max(brainwt, na.rm=TRUE),
+            mean_brainwt = mean(brainwt, na.rm=TRUE),
+            total=n())
+```
+
+
+            
+```{r}
+penguins %>%
+  group_by(species, island) %>%
+  filter(!is.na(body_mass_g)) %>%
+ summarize(mean_body_mass_g = mean(body_mass_g))
+```
+
+```{r}
+penguins %>% 
+  group_by(species, island) %>% 
+  summarize(n=n(), .groups= 'keep')#the .groups argument here just prevents a warning message, n=n is a number of observations
+```
+
+  
+  
+```{r}
+penguins %>% 
+  count(island, species, sort = T) # sort=T will arrange in descending order
+```
+
+```{r}
+penguins %>%
+  group_by(species, island) %>%
+  summarize(n_nas = sum(is.na(sex)))
+```
+  
+```{r}
+penguins %>%
+  summarize(across(contains("mm"), \(x) mean(x, na.rm = TRUE))) #to get rid of R console, (\(x))
+```
+  
+```{r}
+penguins %>%
+  summarise(across(starts_with("bill"), mean, na.rm=T))
+```
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
