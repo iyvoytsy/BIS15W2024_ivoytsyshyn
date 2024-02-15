@@ -3,9 +3,9 @@ title: "Homework 8"
 author: "Please Add Your Name Here"
 date: "`r Sys.Date()`"
 output:
-  html_document:
+  html_document: 
     theme: spacelab
-    toc: no
+    keep_md: true
 ---
 
 ```{r setup, include=FALSE}
@@ -52,8 +52,9 @@ sydneybeaches <-read_csv(here("homework", "data", "sydneybeaches.csv")) %>% clea
 
 2. Are these data "tidy" per the definitions of the tidyverse? How do you know? Are they in wide or long format?
 ```{r}
-
+sydneybeaches #this is the long data, we can see it based on the column date.
 ```
+
 
 3. We are only interested in the variables site, date, and enterococci_cfu_100ml. Make a new object focused on these variables only. Name the object `sydneybeaches_long`
 ```{r}
@@ -105,33 +106,17 @@ sydneybeaches_long_3
 
 9. What was the most polluted beach in 2013?
 ```{r}
-sydneybeaches_long_3 %>%
-  mutate("2013" = as.numeric(2013)) %>%  
-  select(site, 2013) %>%                 
-  arrange(desc("2013"))
+sydneybeaches_long_3$"2013" <- as.numeric(sydneybeaches_long_3$"2013")
 ```
 
-
 ```{r}
-
-if (mean(mammals$mass[mammals$genus == "Lophocebus"]) > 
-    mean(mammals$mass[mammals$genus == "Erythrocebus"]) &&
-    mean(mammals$mass[mammals$genus == "Erythrocebus"]) > 
-    mean(mammals$mass[mammals$genus == "Macaca"])) {
-  cat("Lophocebus has the smallest newborn mass among the specified genera.\n")
-} else if (mean(mammals$mass[mammals$genus == "Erythrocebus"]) > 
-           mean(mammals$mass[mammals$genus == "Lophocebus"]) &&
-           mean(mammals$mass[mammals$genus == "Lophocebus"]) > 
-           mean(mammals$mass[mammals$genus == "Macaca"])) {
-  cat("Erythrocebus has the smallest newborn mass among the specified genera.\n")
-} else if (mean(mammals$mass[mammals$genus == "Macaca"]) > 
-           mean(mammals$mass[mammals$genus == "Lophocebus"]) &&
-           mean(mammals$mass[mammals$genus == "Lophocebus"]) > 
-           mean(mammals$mass[mammals$genus == "Erythrocebus"])) {
-  cat("Macaca has the smallest newborn mass among the specified genera.\n")
-} else {
-  cat("The means are equal.\n")
-}
+  sydneybeaches_long_3 %>%
+  arrange(desc(`2013`)) %>%
+  select(site, `2013`) %>%
+  head(1)
+```
+```{r}
+colnames(sydneybeaches_long_3)
 ```
 
 10. Please complete the class project survey at: [BIS 15L Group Project](https://forms.gle/H2j69Z3ZtbLH3efW6)
