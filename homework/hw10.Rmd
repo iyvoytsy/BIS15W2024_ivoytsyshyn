@@ -70,7 +70,7 @@ sampled_species <- deserts %>%
   )
 ```
 
-```{r}
+```{r echo=FALSE}
 cat("Number of genera:", num_genera, "\n")
 cat("Number of species:", num_species, "\n")
 cat("Total number of observations:", total_observations, "\n")
