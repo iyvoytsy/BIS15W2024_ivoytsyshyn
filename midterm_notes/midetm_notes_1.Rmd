@@ -280,20 +280,392 @@ penguins %>%
 
 
   
+MIDTERM 2 
+
+>>>
+LAB 8 
+
+1/ 
+
+```{r}
+penguins %>% 
+  count(island, species)
+```
+
+```{r}
+penguins %>% 
+  group_by(island, species) %>% 
+  summarize(n_penguins=n(), .groups = 'keep',
+            mean_fliper=mean(flipper_length_mm, na.rm = T),
+            mean_body=mean(body_mass_g, na.rm = T),
+            mean_bill_d=mean(bill_depth_mm, na.rm = T),
+            mean_bill_l=mean(bill_length_mm, na.rm = T))
+```
+
+
+```{r}
+penguins %>%
+  summarise(across(!c(species, island, sex, year), mean, na.rm = TRUE)) %>%
+  summarise(across(contains("mm"), mean, na.rm = TRUE)) #important
+```
+
+2/
+
+
+```{r}
+life_history <- life_history %>%
+  mutate(across(everything(), ~ ifelse(.x %in% c(-999.00, ".", " ", "not measured"), NA, .x))) #important
+```
+
+```{r message=FALSE, warning=FALSE}
+homerange <- read_csv("data/Tamburelloetal_HomeRangeDatabase.csv", na = c("", "NA", "\\"))
+```
+
+```{r}
+penguins %>%
+  summarise(across(!c(species, island, sex, year), mean, na.rm = TRUE)) %>%
+  summarise(across(contains("mm"), mean, na.rm = TRUE)) #important
+```
+
+
+>>>
+LAB 9 
+
+1/
+
+```{r}
+billboard2 <- billboard %>% 
+  pivot_longer(wk1:wk76, # a range of columns
+               names_to = "week",
+               values_to = "rank", 
+               values_drop_na = TRUE #this will drop the NA's
+               )
+billboard2
+```
+
+```{r}
+billboard3 <- billboard %>% 
+  pivot_longer(-c(artist, track, date.entered), #specific columns to stay fixed
+               names_to = "week",
+               values_to = "rank",
+               values_drop_na = TRUE
+               )
+billboard3
+```
+
+```{r}
+plant_2 <- plant %>% 
+  pivot_longer(-c(genotype, water_sched_prog, greenhouse), #specific columns to stay fixed
+               names_to = "day",
+               values_to = "amaunt",
+               values_drop_na = TRUE
+               )
+plant_2
+```
+
+2/
+
+```{r}
+heartrate3 <- heartrate2 %>% 
+  separate(patient, into=c("patient", "sex"), sep="_") %>% 
+  pivot_longer(-c(patient, sex),
+               names_to = "drug",
+               values_to = "heartrate")
+heartrate3
+```
+
+
+```{r}
+heartrate3 %>% 
+  unite(patient_sex, "patient", "sex", sep=" ")
+```
+
+```{r}
+beachbugs_wide %>% 
+  pivot_longer(-year,
+               names_to = "site",
+               values_to = "buglevels", 
+               values_drop_na = TRUE)
+```
+
+>>>
+LAB 10 
+
+1/
+
+```{r}
+homerange %>% 
+  ggplot(aes(x=trophic.guild)) + 
+  geom_bar() #good for counts
+```
+
+```{r}
+homerange %>%
+  filter(class == "mammalia") %>%
+  select(common.name, log10.mass) %>%
+  top_n(-10, log10.mass) %>% # how to select top of something
+  #arrange(log10.mass) %>%
+  #head(10) %>%
+  ggplot(aes(x = log10.mass, y = common.name)) +
+  geom_col()#+
+  #coord_flip()
+```
+
+
+2/
+
+```{r}
+penguins %>% 
+  ggplot(aes(x=species))+
+  geom_bar() #plotting the raw data
+```
+
+
+```{r}
+penguins %>%
+  filter(sex!="NA") %>%
+  group_by(sex) %>%
+  summarise(ave_bill_length_mean = mean(bill_length_mm)) %>%
+  ggplot(aes(x=sex, y=ave_bill_length_mean))+
+  geom_col()
+```
+
+
+```{r}
+homerange %>%
+  group_by(trophic.guild) %>%
+  summarise(log10.mass_mean = mean(log10.mass, na.rm = TRUE))
+```
+
+```{r}
+homerange %>% 
+  filter(trophic.guild == "carnivore" & class == "mammalia") %>%
+  ggplot(aes(x = family, y = log10.hra)) +
+  geom_boxplot()
+```
+
+>>>
+LAB 11
+
+1/
+```{r}
+options(scipen=999)#cancels scientific notation for the session
+```
+
+`geom_col`
+```{r}
+life_history %>% 
+  count(order, count = T) %>% #like arrange
+  ggplot(aes(x=order, y=n))+
+  geom_col()+
+  coord_flip()
+```
+```{r}
+life_history %>%
+  group_by(order) %>%
+  summarise(mean_mass = mean(mass, na.rm=T)) %>%
+  ggplot(aes(x=reorder(order, mean_mass), y=mean_mass))+
+  geom_col()+
+  coord_flip()+
+  scale_y_log10() # usefull for scaling and ordering
+```
+
+
+`geom_bar`
+```{r}
+life_history %>% 
+  ggplot(aes(x=order))+
+  geom_bar()+
+  coord_flip()
+```
+
+
+`geom_jitter`
+```{r}
+life_history %>%
+  ggplot(aes(x=gestation, y=wean_mass))+
+  geom_jitter(na.rm = T)+ #prevemts overploting, #for two continues variables 
+   scale_y_log10()
+```
+
+
+`geom_boxplot`
+```{r}
+life_history %>%
+  ggplot(aes(x=order, y=mass))+
+  geom_boxplot(na.rm=T)+
+  scale_y_log10()+
+  coord_flip()
+```
+
+
+`geom_point`
+```{r}
+elephants %>%
+  ggplot(aes(x=age, y=height))+
+  geom_point()+#for two continues variables 
+  geom_smooth(method = lm, se=T)
+```
+```{r}
+elephants %>% 
+  ggplot(aes(x=age, y=height)) + 
+  geom_point() + 
+  geom_smooth(method=lm, se=T)+ #adds the Standard Error 
+  labs(title="Elephant Age vs. Height", #adds the tittle
+       x="Age (years)",
+       y="Height (cm)")+
+  theme(plot.title = element_text(size = rel(1.75), hjust = 0.5))
+```
+```{r}
+life_history %>% 
+  ggplot(aes(x=gestation, y=log10(mass), size=mass))+
+  geom_point(na.rm=T)
+```
 
 
 
+2/
 
 
+`fill=trophic.guild`
+```{r}
+homerange %>% 
+  ggplot(aes(x=taxon, fill= trophic.guild))+
+  geom_bar()+
+  coord_flip()+
+  labs(tittle= "Observations by Taxon", 
+       x="Taxonomic Group")
+```
+
+`position="dodge"`
+```{r}
+homerange %>% 
+  ggplot(aes(x=taxon, fill= trophic.guild))+
+  geom_bar(position="dodge")+ #Basicly it seperates the fill categories in different bars
+  coord_flip()+
+  labs(tittle= "Observations by Taxon", 
+       x="Taxonomic Group")
+```
 
 
+`color=thermoregulation`
+```{r}
+p <- homerange %>% 
+  ggplot(aes(x= log10.mass, y= log10.hra))
+```
+```{r}
+p + geom_point(aes(color=thermoregulation, shape=thermoregulation), size = 1.5) #shortcut
+```
 
 
+>>>
+LAB 12
+
+1/
+
+```{r}
+deserts %>%
+  filter(species_id %in% c("DS", "DM")) %>%
+  mutate(year==as.factor(year)) %>% # helps to solve the factor problem 
+  group_by(year, species_id) %>%
+  summarise(n=n(), .groups='keep')%>%
+  pivot_wider(names_from = species_id, values_from = n)
+```
 
 
+`geom_line`
+```{r}
+deserts %>%
+  filter(species_id == "DM" | species_id == "DS") %>%
+  mutate(year = as.factor(year)) %>%
+  group_by(year, species_id) %>%
+  summarise(n = n(), .groups = 'keep') %>%
+  ggplot(aes(x = year, y = n, group = species_id, color = species_id)) +
+  geom_line() +
+  geom_point(shape = 2) + 
+  theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+  labs(title = "Number of Species DM and DS", x = "Year", y = "n")
+```
 
 
+`geom_histogram` `bins = 20`
+```{r}
+homerange %>% 
+  ggplot(aes(x = log10.mass)) +
+  geom_histogram(bins = 20)+ #we can adjust the number of bins with the bins argument
+  labs(title = "Distribution of Body Mass")
+```
 
+`alpha, color, fill`
+```{r}
+homerange %>% 
+  ggplot(aes(x=log10.hra)) +
+  geom_histogram(aes(y = after_stat(density)), fill = "deepskyblue4", alpha = 0.4, color = "black")+
+  geom_density(color = "red")+
+  labs(title = "Distribution of hra")
+```
+
+```{r}
+homerange %>%
+  mutate(mass_category= case_when(log10.mass<=1.75 ~ "small",
+                                  log10.mass>1.75 & log10.mass<=2.75 ~ "medium", 
+                                  log10.mass>2.75 ~ "large")) %>% #how to sort values
+  ggplot(aes(x=mass_category, fill=trophic.guild))+
+  geom_bar(position = "dodge") #side by side
+```
+
+`quantcut`
+```{r}
+quartiles <-quantcut(homerange$log10.hra)
+table(quartiles)
+```
+```{r}
+homerange %>%
+  mutate(hra_category= case_when(log10.hra<3.65 ~ "1st quartile",
+                                  log10.hra>3.65 & log10.hra<=4.59 ~ "2st quartile",
+                                  log10.hra>4.59 & log10.hra<=6.03 ~ "3st quartile", 
+                                  log10.hra>6.03 ~ "4st quartile")) %>% #how to get quartiles 
+  filter(hra_category == "2st quartile") %>% #plotting specific quartiles
+  ggplot(aes(x=class, y=log10.mass, fill=class))+
+  geom_boxplot()
+```
+
+
+2/
+
+`facet_grid()`
+```{r}
+homerange %>% 
+  ggplot(aes(x=taxon, y=log10.mass))+
+  geom_boxplot()+
+  facet_grid(trophic.guild~. )+ #you get result in rows
+  theme(axis.text.x = element_text(angle = 60, hjust=1))
+```
+```{r}
+homerange %>% 
+  ggplot(aes(x=taxon, y=log10.mass))+
+  geom_boxplot()+
+  facet_grid(trophic.guild~thermoregulation)+ #more then one categorical variables rows~columns.
+  theme(axis.text.x = element_text(angle = 60, hjust=1))
+```
+
+
+`theme_economist` `x=NULL   `
+```{r}
+q <- homerange %>% 
+  ggplot(aes(x=log10.mass, y=log10.preymass, color=taxon))+
+  geom_point(na.rm=T)
+```
+```{r}
+p + 
+  theme_economist()+
+  theme(legend.position = "top",
+        axis.text.x = element_text(angle = 60, hjust=0))+
+  labs(title = "Observations by Taxon in Homerange Data",
+       x = NULL, #remove the lable from the x axis 
+       y= "n",
+       fill= "Trophic Guild")
+```
 
 
 
