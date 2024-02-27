@@ -668,6 +668,31 @@ p +
 ```
 
 
+>>>
+practice midterm 
+
+```{r}
+surgery_new <- surgery %>%
+  group_by(month) %>%
+  mutate(mort30_n = ifelse(mort30 == "Yes", 1, 0),
+         complication_n = ifelse(complication =="Yes", 1, 0)) %>% 
+  summarise(n_deaths=sum(mort30_n),
+            n_comp=sum(complication_n)) %>%
+  arrange(desc(n_deaths))
+surgery_new
+```
+```{r}
+surgery_new %>%
+  ggplot(aes(x=month, y=n_deaths, fill=n_comp))+
+  geom_col(alpha=0.8, color="black")+
+  
+  labs(title="30-Day Mortality by Month",
+       x=NULL,
+       y="Rate")+
+  scale_x_discrete(limits=c("Jan","Feb","Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"))+
+  theme_light()
+```
+
 
 
 
