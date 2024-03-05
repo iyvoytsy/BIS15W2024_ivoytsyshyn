@@ -24,6 +24,11 @@ library(janitor)
 library(ggmap)
 ``` 
 
+```{r}
+register_stadiamaps("d67f62a2-bd90-430c-a40a-9ad6e095b888", write = FALSE)
+```
+
+
 ## Load the Data
 We will use two separate data sets for this homework.  
 
@@ -42,18 +47,35 @@ grizzly <- read_csv("data/bear-sightings.csv") %>%
 
 2. Use the range of the latitude and longitude to build an appropriate bounding box for your map. 
 ```{r}
-
+grizzly %>%
+  select(longitude, latitude) %>%
+  summary()
 ```
+```{r}
+lat <- c(55.02, 70.37)
+long <- c(-166.2, -131.3)
+bbox <- make_bbox(long, lat, f=0.03)
+```
+
 
 3. Load a map from `stamen` in a terrain style projection and display the map.
 ```{r}
-
+map1 <- get_stadiamap(bbox, maptype = "stamen_terrain", zoom=7)
 ```
+
+```{r}
+ggmap(map1)
+```
+
 
 
 4. Build a final map that overlays the recorded observations of grizzly bears in Alaska.  
 ```{r}
-
+ggmap(map1) +
+  geom_point(data=grizzly, aes(longitude, latitude), size = 0.5)+
+  labs(x = "Longitude", 
+       y = "Latitude",
+       title = "Grizzly Observations")
 ```
 
 
@@ -61,37 +83,66 @@ Let's switch to the wolves data. Brandell, Ellen E (2021), Serological dataset a
 
 5. Load the data and evaluate its structure.  
 ```{r}
-
+wolves <- read_csv("data/wolves_data/wolves_dataset.csv")
 ```
+```{r}
+str(wolves)
+```
+
 
 
 6. How many distinct wolf populations are included in this study? Mae a new object that restricts the data to the wolf populations in the lower 48 US states.  
 ```{r}
-
+wolves_2 <- wolves %>%
+  filter(lat<= 49.38)
 ```
+```{r}
+wolves_2 %>%
+  count(pop)
+```
+
 
 
 7. Use the range of the latitude and longitude to build an appropriate bounding box for your map. 
 ```{r}
-
+wolves_2 %>%
+  select(long, lat) %>%
+  summary()
+```
+```{r}
+lat_2 <- c(33.89, 47.75)
+long_2 <- c(-110.99, -86.82)
+bbox_2 <- make_bbox(long_2, lat_2, f=0.03)
 ```
 
 
 8.  Load a map from `stamen` in a `terrain-lines` projection and display the map.  
 ```{r}
-
+map_2 <- get_stadiamap(bbox_2, maptype = "stamen_terrain", zoom=7)
 ```
+```{r}
+ggmap(map_2)
+```
+
 
 
 9. Build a final map that overlays the recorded observations of wolves in the lower 48 states.  
 ```{r}
-
+ggmap(map_2) +
+  geom_point(data=wolves_2, aes(long, lat), size = 2)+
+  labs(x = "Longitude", 
+       y = "Latitude",
+       title = "Wolves' Observations")
 ```
 
 
 10. Use the map from #9 above, but add some aesthetics. Try to `fill` and `color` by population.  
 ```{r}
-
+ggmap(map_2) +
+  geom_point(data=wolves_2, aes(long, lat, color = pop), size = 2)+
+  labs(x = "Longitude", 
+       y = "Latitude",
+       title = "Wolves' Observations")
 ```
 
 
