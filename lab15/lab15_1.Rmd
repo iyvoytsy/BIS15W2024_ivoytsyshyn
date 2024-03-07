@@ -1,0 +1,238 @@
+---
+title: "BIS15L_AI_class"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+Today, we're exploring how AI can aid in writing, comprehending and troubleshooting our R code. AI is a very valuable tool, but it's important not to rely on it entirely. Building a strong R foundation is still important. These AI tools are not perfect and can be inaccurate solutions. In addition these tools can't read our minds, so understanding R helps us generate better prompts to get better responses. In short, AI should be used as a tool, not a crutch. Additionally, do not forget about other useful resources like Stack Overflow/Exchange, online tutorials, and GitHub issues pages for learning and troubleshooting. Let's combine AI with traditional methods to master R effectively.
+
+This overview isn't exhaustive of all possible AI tools for R coding, but I believe it is a good start and covers everything you need.
+
+
+**Make sure to enable Github Copilot in RStudio.**
+Go to Tools -> Global Options -> Copilot -> Enable Git
+
+## Learning Goals: 
+*At the end of this exercise, you will be able to:*  
+1. Explain what AI is and what AI tools can be used for R.
+2. Enable Github Copilot in RStudio.
+3. Use Copilot/ChatGPT to write code in RStudio.
+4. Use Copilot/ChatGPT for troubleshooting code in RStudio.
+
+
+## Exploration Questions:
+Lets get some get a feel for what copilot (or ChatGPT) does, use Github Copilot to autocomplete the questions below. You can alternatively paste the questions in ChatGPT or Microsoft Copilot.
+1. What is AI?
+AI stands for Artificial Intelligence. It refers to the simulation of human intelligence processes by machines, especially computer systems. These processes include learning (the acquisition of information and rules for using the information), reasoning (using rules to reach approximate or definite conclusions), and self-correction.
+
+2. What is ChatGPT?
+ChatGPT is a conversational AI developed by OpenAI. It's based on the GPT (Generative Pre-trained Transformer) architecture and is designed to understand and generate human-like text based on the input it receives. It can be used for a variety of natural language processing tasks, including answering questions, generating text, providing recommendations, and more.
+
+3. What is Github Copilot?
+GitHub Copilot is an AI-powered code completion tool developed by GitHub in collaboration with OpenAI. It is designed to assist developers by providing suggestions and completions for code as they write. It uses a model trained on a large dataset of code from open-source projects to offer contextually relevant completions and suggestions, helping developers write code more efficiently.
+
+
+4. What is the most efficient way to write the code in the recent years?
+n recent years, efficient code writing involves:
+
+Using IDEs for features like code completion.
+Leveraging AI-powered tools like GitHub Copilot for code suggestions.
+Employing version control systems like Git.
+Utilizing libraries and frameworks.
+Implementing automated testing.
+Conducting code reviews and pair programming.
+Following Agile and DevOps practices.
+Applying performance optimization techniques.
+
+
+
+## Load the libraries  
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(janitor)
+library(dplyr)
+library(shiny)
+library(shinydashboard)
+```
+
+## Load the Data: 
+```{r}
+#load the Netflix Data in your Data folder, save it under the object name netflix
+
+netflix <- readr::read_csv("data/netflix_titles.csv")
+```
+
+*Did copilot help you write the code above? Could anything about the prompt be improved to help Copilot understand what you want to do more accurately?*
+
+
+## Lets Practice:
+Explore the elements in your data: include a comment within your code chunk to prompt Copilot to use the function of your choice
+```{r}
+summary(netflix) # Summarize data frame
+
+```
+*Did copilot use your preferred method to get the summary of the data? If not, how could you improve the prompt to get the desired output?*
+
+
+Sort out the movies from the netflix into an new object called netflix_movies
+```{r} 
+netflix_movies <- netflix[netflix$type == "Movie", ]
+```
+
+
+Which director has the most movies on netflix?
+```{r}
+netflix_movies %>%
+  filter(!is.na(director)) %>%
+  group_by(director) %>%
+  count(director) %>%
+  arrange(desc(n))
+
+```
+*Do you see anything wrong with the table above, look at row 1. Write a prompt below to fix this.*
+
+[insert your prompt here]
+```{r}
+netflix_movies %>%
+  filter(type == "Movie" & !is.na(director)) %>%
+  separate_rows(director, sep = ", ") %>%
+  group_by(director) %>%
+  count(director) %>%
+  arrange(desc(n))
+```
+
+
+
+Which director had the most movies by release year and remove the NA's?
+```{r}
+netflix %>%
+  filter(type == "Movie" & !is.na(director)) %>%
+  group_by(release_year) %>%
+  mutate(director = str_split(director, ", ")[[1]][1]) %>% # Extracting the first director if multiple directors exist
+  group_by(release_year, director) %>%
+  count() %>%
+  arrange(release_year, desc(n))
+```
+
+*See anything else interesting about this table, look at the first director on the table. Could this be a problem and how can we edit the dataset to fix this? Try writing a prompt.*
+
+
+[Insert your prompt here]
+```{r}
+
+```
+
+
+
+
+Make a bar plot of the top directors with the most movies on netflix
+```{r}
+top_directors <- netflix %>%
+  filter(type == "Movie" & !is.na(director)) %>%
+  separate_rows(director, sep = ", ") %>%
+  count(director) %>%
+  arrange(desc(n)) %>%
+  top_n(10) # Select the top 10 directors
+
+# Create a bar plot
+ggplot(top_directors, aes(x = reorder(director, n), y = n)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Top Directors with Most Movies on Netflix",
+       x = "Director",
+       y = "Number of Movies") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for better readability
+
+```
+*Do you see any issues with this plot? How could we improve the prompt to get a better boxplot? Try writing a prompt.*
+
+[Insert your prompt here]
+```{r}
+# Filter the data for the year 2020 and select the top 10 directors
+netflix_2020 <- netflix %>%
+  filter(type == "Movie" & !is.na(director) & release_year == 2020) %>%
+  separate_rows(director, sep = ", ") %>%
+  count(director) %>%
+  arrange(desc(n)) %>%
+  slice(1:10) # Select the top 10 directors
+
+# Create a bar plot for the top 10 directors in 2020
+ggplot(netflix_2020, aes(x = reorder(director, n), y = n)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Top 10 Directors with Most Movies on Netflix in 2020",
+       x = "Director",
+       y = "Number of Movies") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for better readability
+```
+
+*How about for just 2020*
+
+
+
+[Insert your prompt here]
+```{r}
+
+```
+
+
+*Take a few minutes to make your own plot(s) using prompts, edit prompts until you get a plot that you like.*
+
+
+
+
+
+
+## Lets make the top 10 directors barplot into a Shiny App: use copilot or Chatgpt
+
+
+*Now use ChatGPT, Copilot or previous notes to fix the code*
+
+
+```{r}
+ui <- fluidPage(
+  titlePanel("Top 10 Directors with Most Movies on Netflix"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput("year", "Select Year:", choices = c(2008, 2010, 2020), selected = 2020)
+    ),
+    mainPanel(
+      plotOutput("barplot")
+    )
+  )
+)
+
+# Define server logic
+server <- function(input, output) {
+  output$barplot <- renderPlot({
+    # Filter the data for the selected year and select the top 10 directors
+    netflix_year <- netflix %>%
+      filter(type == "Movie" & !is.na(director) & release_year == input$year) %>%
+      separate_rows(director, sep = ", ") %>%
+      count(director, name = "num_movies") %>%
+      arrange(desc(num_movies)) %>%
+      slice(1:10) # Select the top 10 directors
+    
+    # Create a bar plot for the top 10 directors in the selected year
+    ggplot(netflix_year, aes(x = director, y = num_movies, fill = director)) +
+      geom_bar(stat = "identity") +
+      labs(title = paste("Top 10 Directors with Most Movies on Netflix in", input$year),
+           x = "Director",
+           y = "Number of Movies") +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1),
+            legend.position = "none") +  # Remove legend
+      scale_fill_manual(values = rainbow(nrow(netflix_year))) # Apply color to bars
+  })
+}
+
+# Run the application
+shinyApp(ui = ui, server = server)
+```
+
+
+
+## That's it! Let's take a break and then move on to working on group projects.
